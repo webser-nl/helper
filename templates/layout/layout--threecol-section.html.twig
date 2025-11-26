@@ -1,0 +1,73 @@
+{#
+/**
+ * @file
+ * Template for a three column layout.
+ *
+ * Available variables:
+ * - content: The content for this layout.
+ * - attributes: HTML attributes for the layout <div>.
+ * - region_attributes: HTML attributes for regions.
+ * - settings: Layout configuration settings.
+ */
+#}
+{%
+  set classes = [
+    'layout',
+    'layout--threecol',
+  ]
+%}
+
+{% if content %}
+  <div{{ attributes.addClass(classes) }}>
+
+    {% if settings.top_region %}
+      <div{{ region_attributes.top.addClass('layout__region', 'layout__region--top') }}>
+        {{ content.top }}
+      </div>
+    {% endif %}
+
+    <div class="layout__content{% if settings.container %} container{% endif %}">
+
+      {# Tabs if enabled #}
+      {% if tabs %}
+        <ul class="layout__tabs nav nav-tabs {{ settings.tabs_class }}" role="tablist">
+          {% for tab in tabs %}
+            <li class="nav-item" role="presentation">
+              <button class="nav-link{% if loop.first %} active{% endif %}"
+                      id="tab-{{ tab.id }}"
+                      data-bs-toggle="tab"
+                      data-bs-target="#{{ tab.id }}"
+                      type="button"
+                      role="tab"
+                      aria-controls="{{ tab.id }}"
+                      aria-selected="{% if loop.first %}true{% else %}false{% endif %}">
+                {{ tab.title }}
+              </button>
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+
+      <div class="row">
+        <div{{ region_attributes.first.addClass('layout__region', 'layout__region--first') }}>
+          {{ content.first }}
+        </div>
+
+        <div{{ region_attributes.second.addClass('layout__region', 'layout__region--second') }}>
+          {{ content.second }}
+        </div>
+
+        <div{{ region_attributes.third.addClass('layout__region', 'layout__region--third') }}>
+          {{ content.third }}
+        </div>
+      </div>
+    </div>
+
+    {% if settings.bottom_region %}
+      <div{{ region_attributes.bottom.addClass('layout__region', 'layout__region--bottom') }}>
+        {{ content.bottom }}
+      </div>
+    {% endif %}
+
+  </div>
+{% endif %}
