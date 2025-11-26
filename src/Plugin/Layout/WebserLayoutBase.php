@@ -294,7 +294,8 @@ abstract class WebserLayoutBase extends MultiWidthLayoutBase {
    */
   protected function getDefaultWidth(): string {
     $widthClasses = array_keys($this->getWidthOptions());
-    return reset($widthClasses);
+    $default = reset($widthClasses);
+    return (string) $default;
   }
 
 }
