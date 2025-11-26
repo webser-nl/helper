@@ -3,6 +3,7 @@ layout_onecol:
   label: 'One column'
   category: 'Columns: 1'
   template: layout--onecol-section
+  path: templates/layout
   class: '\Drupal\webser_helper\Plugin\Layout\OneColumnLayout'
   default_region: main
   icon_map:
@@ -16,6 +17,7 @@ layout_twocol_section:
   label: 'Two column'
   category: 'Columns: 2'
   template: layout--twocol-section
+  path: templates/layout
   class: '\Drupal\webser_helper\Plugin\Layout\TwoColumnLayout'
   default_region: first
   icon_map:
@@ -31,6 +33,7 @@ layout_threecol_section:
   label: 'Three column'
   category: 'Columns: 3'
   template: layout--threecol-section
+  path: templates/layout
   class: '\Drupal\webser_helper\Plugin\Layout\ThreeColumnLayout'
   default_region: first
   icon_map:
