@@ -1,5 +1,5 @@
 {
-  "name": "webser/webser_helper",
+  "name": "drupal/webser_helper",
   "description": "Modern Drupal helper module for Webser projects with Layout Builder focus",
   "type": "drupal-module",
   "license": "GPL-2.0-or-later",
