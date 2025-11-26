@@ -1,0 +1,129 @@
+/**
+ * @file
+ * Social share block styles.
+ */
+
+.social-share-wrapper {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.social-share-wrapper.collapsed-icons {
+  position: relative;
+}
+
+.social-share-wrapper .share-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: var(--color-primary, #0066cc);
+  color: white;
+  text-decoration: none;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.social-share-wrapper .share-icon:hover {
+  transform: scale(1.1);
+  background: var(--color-primary-dark, #004c99);
+}
+
+.social-share-wrapper .share-icon span {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Collapsed variant */
+.collapsed-icons .toggle-share {
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  background: var(--color-primary, #0066cc);
+  color: white;
+  border-radius: 0.25rem;
+  transition: background-color 0.2s ease;
+}
+
+.collapsed-icons .toggle-share:hover {
+  background: var(--color-primary-dark, #004c99);
+}
+
+.collapsed-icons .icons-wrapper {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  background: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  gap: 0.5rem;
+  z-index: 100;
+}
+
+.collapsed-icons .icons-wrapper.is-open {
+  display: flex;
+}
+
+/* Service-specific colors */
+.share-icon--facebook {
+  background: #1877f2;
+}
+
+.share-icon--facebook:hover {
+  background: #145dbf;
+}
+
+.share-icon--twitter {
+  background: #1da1f2;
+}
+
+.share-icon--twitter:hover {
+  background: #1a8cd8;
+}
+
+.share-icon--linkedin {
+  background: #0077b5;
+}
+
+.share-icon--linkedin:hover {
+  background: #006097;
+}
+
+.share-icon--whatsapp {
+  background: #25d366;
+}
+
+.share-icon--whatsapp:hover {
+  background: #1fb855;
+}
+
+.share-icon--email {
+  background: #666;
+}
+
+.share-icon--email:hover {
+  background: #444;
+}
+
+.share-icon--copy {
+  background: #999;
+}
+
+.share-icon--copy:hover {
+  background: #777;
+}
+
+.share-icon--copy.copied {
+  background: #28a745;
+}

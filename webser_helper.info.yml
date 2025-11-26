@@ -1,0 +1,17 @@
+name: 'Webser Helper'
+type: module
+description: 'Modern helper module for Webser projects with Layout Builder optimizations, performance helpers, and developer tools.'
+package: Webser
+core_version_requirement: ^10 || ^11
+version: '2.0.0'
+
+dependencies:
+  - drupal:layout_builder
+  - drupal:layout_discovery
+  - drupal:block
+  - drupal:media
+  - drupal:image
+
+# Optional but recommended modules
+# - admin_toolbar
+# - admin_toolbar_tools

@@ -1,0 +1,49 @@
+{#
+/**
+ * @file
+ * Template for social share block.
+ *
+ * Available variables:
+ * - url: The URL to share.
+ * - title: The title to share.
+ * - image: Optional image URL.
+ * - services: Array of enabled services.
+ * - collapsed: Whether icons are collapsed by default.
+ */
+#}
+<div class="social-share-wrapper{{ collapsed ? ' collapsed-icons' : '' }}">
+  {% if collapsed %}
+    <div class="toggle-share">{{ 'Share'|t }}</div>
+    <div class="icons-wrapper">
+  {% endif %}
+
+  {% for key, service in services %}
+    {% set share_url = '' %}
+    {% set share_title = title|escape %}
+
+    {% if key == 'facebook' %}
+      {% set share_url = 'https://www.facebook.com/sharer/sharer.php?u=' ~ url|url_encode %}
+    {% elseif key == 'twitter' %}
+      {% set share_url = 'https://twitter.com/intent/tweet?text=' ~ share_title ~ '&url=' ~ url|url_encode %}
+    {% elseif key == 'linkedin' %}
+      {% set share_url = 'https://www.linkedin.com/sharing/share-offsite/?url=' ~ url|url_encode %}
+    {% elseif key == 'whatsapp' %}
+      {% set share_url = 'https://wa.me/?text=' ~ url|url_encode %}
+    {% elseif key == 'email' %}
+      {% set share_url = 'mailto:?subject=' ~ share_title ~ '&body=' ~ url|url_encode %}
+    {% elseif key == 'copy' %}
+      {% set share_url = url %}
+    {% endif %}
+
+    <a href="{{ share_url }}"
+       class="share-icon share-icon--{{ key }}"
+       aria-label="{{ 'Share via @service'|t({'@service': service.label}) }}"
+       {% if key not in ['email', 'copy'] %}target="_blank" rel="noopener"{% endif %}>
+      <span>{{ service.label }}</span>
+    </a>
+  {% endfor %}
+
+  {% if collapsed %}
+    </div>
+  {% endif %}
+</div>

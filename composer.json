@@ -1,0 +1,17 @@
+{
+  "name": "webser/webser_helper",
+  "description": "Modern Drupal helper module for Webser projects with Layout Builder focus",
+  "type": "drupal-module",
+  "license": "GPL-2.0-or-later",
+  "homepage": "https://www.webser.nl",
+  "minimum-stability": "stable",
+  "require": {
+    "php": ">=8.2",
+    "drupal/core": "^10 || ^11"
+  },
+  "autoload": {
+    "psr-4": {
+      "Drupal\\webser_helper\\": "src/"
+    }
+  }
+}

@@ -1,0 +1,44 @@
+# Override default one column layout
+layout_onecol:
+  label: 'One column'
+  category: 'Columns: 1'
+  template: layout--onecol-section
+  class: '\Drupal\webser_helper\Plugin\Layout\OneColumnLayout'
+  default_region: main
+  icon_map:
+    - [main]
+  regions:
+    main:
+      label: Main content
+
+# Override two column section layout
+layout_twocol_section:
+  label: 'Two column'
+  category: 'Columns: 2'
+  template: layout--twocol-section
+  class: '\Drupal\webser_helper\Plugin\Layout\TwoColumnLayout'
+  default_region: first
+  icon_map:
+    - [first, second]
+  regions:
+    first:
+      label: First column
+    second:
+      label: Second column
+
+# Override three column section layout
+layout_threecol_section:
+  label: 'Three column'
+  category: 'Columns: 3'
+  template: layout--threecol-section
+  class: '\Drupal\webser_helper\Plugin\Layout\ThreeColumnLayout'
+  default_region: first
+  icon_map:
+    - [first, second, third]
+  regions:
+    first:
+      label: First column
+    second:
+      label: Second column
+    third:
+      label: Third column

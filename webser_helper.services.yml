@@ -1,0 +1,42 @@
+services:
+  # Twig extensions for helpful filters and functions
+  webser_helper.twig_extension:
+    class: Drupal\webser_helper\Twig\WebserTwigExtension
+    arguments:
+      - '@entity_type.manager'
+      - '@renderer'
+      - '@file_url_generator'
+      - '@image.factory'
+    tags:
+      - { name: twig.extension }
+
+  # Image helper service with dependency injection
+  webser_helper.image_helper:
+    class: Drupal\webser_helper\Service\ImageHelperService
+    arguments:
+      - '@entity_type.manager'
+      - '@file_url_generator'
+      - '@image.factory'
+      - '@logger.factory'
+
+  # Layout Builder helper service
+  webser_helper.layout_builder_helper:
+    class: Drupal\webser_helper\Service\LayoutBuilderHelperService
+    arguments:
+      - '@entity_type.manager'
+      - '@cache.render'
+      - '@renderer'
+
+  # Event subscriber for Ajax responses (wider dialogs)
+  webser_helper.ajax_response_subscriber:
+    class: Drupal\webser_helper\EventSubscriber\LayoutBuilderAjaxSubscriber
+    tags:
+      - { name: event_subscriber }
+
+  # Cache helper service
+  webser_helper.cache_helper:
+    class: Drupal\webser_helper\Service\CacheHelperService
+    arguments:
+      - '@cache_tags.invalidator'
+      - '@cache.render'
+      - '@logger.factory'

@@ -1,0 +1,29 @@
+# Social share functionality
+social-share:
+  version: 2.0
+  css:
+    theme:
+      css/social-share.css: { minified: false }
+  js:
+    js/social-share.js: { minified: false }
+  dependencies:
+    - core/drupal
+    - core/drupalSettings
+
+# Layout Builder admin enhancements
+layout-builder-enhancements:
+  version: 2.0
+  css:
+    theme:
+      css/layout-builder-admin.css: { minified: false }
+  dependencies:
+    - core/drupal
+    - layout_builder/drupal.layout_builder
+
+# Performance: Lazy loading helper
+lazy-loading:
+  version: 2.0
+  js:
+    js/lazy-loading.js: { minified: false }
+  dependencies:
+    - core/drupal

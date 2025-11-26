@@ -1,0 +1,233 @@
+<?php
+
+/**
+ * @file
+ * Webser Helper module - Modern Drupal 10/11 helper functionality.
+ */
+
+declare(strict_types=1);
+
+use Drupal\Core\Render\Element;
+use Drupal\Component\Serialization\Json;
+use Drupal\Core\Url;
+
+/**
+ * Implements hook_theme().
+ */
+function webser_helper_theme(): array {
+  return [
+    'webser_social_share' => [
+      'variables' => [
+        'url' => NULL,
+        'title' => NULL,
+        'image' => NULL,
+        'services' => [],
+        'collapsed' => FALSE,
+      ],
+      'template' => 'webser-social-share',
+    ],
+  ];
+}
+
+/**
+ * Prepares variables for layout templates.
+ *
+ * Adds configurable column widths, padding, borders, and tab functionality.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - content: An associative array containing the properties of the element.
+ *   - settings: Layout configuration settings.
+ */
+function webser_helper_preprocess_layout(array &$variables): void {
+  $settings = $variables['settings'] ?? [];
+
+  // Add column width classes to regions.
+  if (!empty($settings['column_widths'])) {
+    _webser_helper_add_column_classes($variables, $settings['column_widths']);
+  }
+
+  // Add tab functionality if configured.
+  if (!empty($settings['tabs_class'])) {
+    _webser_helper_add_tabs($variables, $settings);
+  }
+
+  // Add border styling if configured.
+  if (!empty($settings['border_toggle'])) {
+    _webser_helper_add_border($variables, $settings);
+  }
+}
+
+/**
+ * Adds column width classes to layout regions.
+ *
+ * @param array $variables
+ *   Layout variables.
+ * @param string $columnWidth
+ *   Column width configuration (e.g., '6/6', '8/4').
+ */
+function _webser_helper_add_column_classes(array &$variables, string $columnWidth): void {
+  $hook = $variables['theme_hook_original'] ?? NULL;
+  $columnWidths = explode('/', $columnWidth);
+  $regions = Element::children($variables['content']);
+
+  $columns = ['first', 'second', 'third'];
+
+  foreach ($regions as $key => $name) {
+    // Handle one column layout with optional offset.
+    if ($hook === 'layout__onecol_section') {
+      $size = $columnWidths[0] ?? 12;
+      $variables['region_attributes'][$name]->addClass('col-md-' . $size);
+
+      if (!empty($columnWidths[1])) {
+        $variables['region_attributes'][$name]->addClass('offset-md-' . $columnWidths[1]);
+      }
+    }
+    else {
+      // Multi-column layouts.
+      $columnKey = array_search($name, $columns, TRUE);
+      if ($columnKey !== FALSE && !empty($columnWidths[$columnKey])) {
+        $variables['region_attributes'][$name]->addClass('col-md-' . $columnWidths[$columnKey]);
+      }
+    }
+  }
+}
+
+/**
+ * Adds tab functionality to layout.
+ *
+ * @param array $variables
+ *   Layout variables.
+ * @param array $settings
+ *   Layout settings.
+ */
+function _webser_helper_add_tabs(array &$variables, array $settings): void {
+  $mainRegion = isset($variables['content']['main']) ? 'main' : 'second';
+  $tabsClass = $settings['tabs_class'];
+  $variables['tabs'] = [];
+
+  foreach ($variables['content'][$mainRegion] ?? [] as $key => $block) {
+    if (!isset($block['#base_plugin_id'])) {
+      continue;
+    }
+
+    $pluginId = $block['#base_plugin_id'];
+    if ($pluginId === 'inline_block' || $pluginId === 'block_content') {
+      $blockContent = $block['content']['#block_content'] ?? NULL;
+
+      if ($blockContent) {
+        $id = $tabsClass . '-tab-' . (count($variables['tabs']) + 1);
+
+        // Get tab title from field or use block label.
+        $tabTitle = $blockContent->hasField('field_tab_title')
+          ? $blockContent->get('field_tab_title')->value
+          : NULL;
+
+        $tabId = $blockContent->hasField('field_tab_id')
+          ? $blockContent->get('field_tab_id')->value
+          : NULL;
+
+        $variables['content'][$mainRegion][$key]['#attributes']['id'] = $tabId ?? $id;
+        $variables['tabs'][] = [
+          'id' => $tabId ?? $id,
+          'title' => $tabTitle ?? $blockContent->label(),
+          'weight' => $block['#weight'] ?? 0,
+        ];
+      }
+    }
+  }
+
+  // Sort tabs by weight.
+  if (!empty($variables['tabs'])) {
+    usort($variables['tabs'], fn($a, $b) => $a['weight'] <=> $b['weight']);
+  }
+}
+
+/**
+ * Adds border styling to layout.
+ *
+ * @param array $variables
+ *   Layout variables.
+ * @param array $settings
+ *   Layout settings.
+ */
+function _webser_helper_add_border(array &$variables, array $settings): void {
+  $position = $settings['border_toggle'] == 2 ? 'border-bottom' : 'border-top';
+
+  $variables['border'] = [
+    'position' => $position,
+    'color' => $settings['border_color'] ?? '#ECECEC',
+  ];
+}
+
+/**
+ * Implements hook_layout_alter().
+ */
+function webser_helper_layout_alter(array &$definitions): void {
+  // Remove unused layouts.
+  $layoutsToRemove = ['layout_fourcol_section'];
+
+  foreach ($layoutsToRemove as $layout) {
+    unset($definitions[$layout]);
+  }
+}
+
+/**
+ * Implements hook_link_alter().
+ */
+function webser_helper_link_alter(array &$variables): void {
+  /** @var \Drupal\Core\Url $url */
+  $url = $variables['url'];
+
+  if (!$url->isRouted()) {
+    return;
+  }
+
+  $routeName = $url->getRouteName();
+
+  // Only alter Layout Builder links.
+  if (!str_starts_with($routeName, 'layout_builder.')) {
+    return;
+  }
+
+  $options = $variables['options']['attributes']['class'] ?? [];
+  if (!in_array('use-ajax', $options, TRUE)) {
+    return;
+  }
+
+  // Use wider modal dialog for add/update block.
+  if ($routeName === 'layout_builder.add_block' || $routeName === 'layout_builder.update_block') {
+    $variables['options']['attributes']['data-dialog-options'] = Json::encode([
+      'width' => 800,
+      'height' => 'auto',
+      'target' => 'layout-builder-modal',
+      'autoResize' => TRUE,
+      'modal' => TRUE,
+    ]);
+    $variables['options']['attributes']['data-dialog-type'] = 'dialog';
+    unset($variables['options']['attributes']['data-dialog-renderer']);
+  }
+  else {
+    // Wider off-canvas for other dialogs.
+    $variables['options']['attributes']['data-dialog-options'] = Json::encode([
+      'width' => 500,
+    ]);
+  }
+}
+
+/**
+ * Implements hook_contextual_links_alter().
+ */
+function webser_helper_contextual_links_alter(array &$links, string $group, array $route_parameters): void {
+  if (isset($links['layout_builder_block_update'])) {
+    $links['layout_builder_block_update']['localized_options']['attributes']['data-dialog-type'] = 'dialog';
+    $links['layout_builder_block_update']['localized_options']['attributes']['data-dialog-options'] = Json::encode([
+      'width' => 800,
+      'height' => 'auto',
+      'target' => 'layout-builder-modal',
+      'autoResize' => TRUE,
+      'modal' => TRUE,
+    ]);
+    unset($links['layout_builder_block_update']['localized_options']['attributes']['data-dialog-renderer']);
+  }
+}
